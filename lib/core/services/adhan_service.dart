@@ -1,4 +1,5 @@
 import 'package:adhan_dart/adhan_dart.dart';
+import 'package:flutter/material.dart';
 import 'package:timezone/timezone.dart' as tz;
 
 import '../../features/adhan/domain/entities/adhan_status.dart';
@@ -70,6 +71,7 @@ class AdhanService {
         currentPrayer: currentPrayer,
         nextPrayer: nextPrayer,
         remainingTime: remaining,
+        shouldPlayAdhan: false,
       );
 
       if (remaining <= Duration.zero) {

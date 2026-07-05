@@ -1,4 +1,5 @@
 import 'package:adhan_dart/adhan_dart.dart';
+import 'package:azan_app/core/services/notafications_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -65,7 +66,7 @@ class AzanScreen extends StatelessWidget {
       ),
       body: BlocProvider(
         create: (context) =>
-            AdhanCubit(AdhanService(), AudioService())
+            AdhanCubit(AdhanService(), AudioService(), NotificationService())
               ..start(coordinates: coordinates, location: location),
         child: ListView(
           padding: const EdgeInsets.all(16),
@@ -92,7 +93,30 @@ class AzanScreen extends StatelessWidget {
             prayerTile('Asr', prayerTimes.asr),
             prayerTile('Maghrib', prayerTimes.maghrib),
             prayerTile('Isha', prayerTimes.isha),
-
+            ElevatedButton(
+              onPressed: () async {
+                try {
+                  final testTime = tz.TZDateTime.now(
+                    location,
+                  ).add(const Duration(seconds: 3));
+                  await NotificationService().scheduleForPrayer(
+                    id: 999,
+                    title: 'Test Prayer',
+                    scheduledTime: testTime,
+                  );
+                  debugPrint('✅ Test notification scheduled for $testTime');
+                } catch (e, st) {
+                  debugPrint('❌ Failed to schedule: $e\n$st');
+                }
+              },
+              child: const Text('Test notification in 3s'),
+            ),
+            // ElevatedButton(
+            //   onPressed: () async {
+            //     AudioService.stop();
+            //   },
+            //   child: const Text('Stop adhan'),
+            // ),
             const Divider(height: 32),
             AdhanRemainingTimeBlocBuilder(),
           ],

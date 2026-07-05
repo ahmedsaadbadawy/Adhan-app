@@ -8,15 +8,18 @@ import 'package:timezone/timezone.dart' as tz;
 
 import '../../../../../core/services/adhan_service.dart';
 import '../../../../../core/services/audio_service.dart';
+import '../../../../../core/services/notafications_service.dart';
 import '../../../domain/entities/adhan_status.dart';
 
 part 'adhan_state.dart';
 
 class AdhanCubit extends Cubit<AdhanState> {
-  AdhanCubit(this._adhanService, this._audioService) : super(AdhanInitial());
+  AdhanCubit(this._adhanService, this._audioService, this._notificationService)
+    : super(AdhanInitial());
 
   final AdhanService _adhanService;
   final AudioService _audioService;
+  final NotificationService _notificationService;
 
   StreamSubscription<AdhanStatus>? _subscription;
 
@@ -26,6 +29,17 @@ class AdhanCubit extends Cubit<AdhanState> {
     CalculationParameters? calculationParameters,
   }) {
     emit(AdhanLoading());
+
+    final prayerTimes = _adhanService.getPrayerTimes(
+      coordinates: coordinates,
+      location: location,
+      calculationParameters: calculationParameters,
+    );
+
+    _notificationService.scheduleTodaysPrayers(
+      prayerTimes: prayerTimes,
+      location: location,
+    );
 
     _subscription?.cancel();
 
