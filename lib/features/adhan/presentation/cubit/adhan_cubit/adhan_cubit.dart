@@ -1,0 +1,54 @@
+import 'dart:async';
+
+import 'package:adhan_dart/adhan_dart.dart';
+import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:timezone/timezone.dart' as tz;
+
+import '../../../../../core/services/adhan_service.dart';
+import '../../../../../core/services/audio_service.dart';
+import '../../../domain/entities/adhan_status.dart';
+
+part 'adhan_state.dart';
+
+class AdhanCubit extends Cubit<AdhanState> {
+  AdhanCubit(this._adhanService, this._audioService) : super(AdhanInitial());
+
+  final AdhanService _adhanService;
+  final AudioService _audioService;
+
+  StreamSubscription<AdhanStatus>? _subscription;
+
+  void start({
+    required Coordinates coordinates,
+    required tz.Location location,
+    CalculationParameters? calculationParameters,
+  }) {
+    emit(AdhanLoading());
+
+    _subscription?.cancel();
+
+    _subscription = _adhanService
+        .adhanStatusStream(
+          coordinates: coordinates,
+          location: location,
+          calculationParameters: calculationParameters,
+        )
+        .listen((adhanStatus) async {
+          if (adhanStatus.shouldPlayAdhan) {
+            await _audioService.playSound('sounds/adhan.mp3').catchError((e) {
+              debugPrint('Failed to play adhan audio: $e');
+            });
+          }
+
+          emit(AdhanSuccess(adhanStatus: adhanStatus));
+        });
+  }
+
+  @override
+  Future<void> close() async {
+    await _subscription?.cancel();
+    return super.close();
+  }
+}
