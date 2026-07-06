@@ -65,7 +65,6 @@ class NotificationService {
   }) async {
     final prefs = await SharedPreferences.getInstance();
     final todayKey = DateFormat('yyyy-MM-dd').format(DateTime.now());
-    print('========== scheduleUpcomingPrayers START ==========');
 
     if (!force && prefs.getString(_prefsKey) == todayKey) {
       return;
@@ -140,14 +139,21 @@ class NotificationService {
   }
 
   Future<void> handleAppPermissions() async {
+    print("NotificationService.init() called");
     var notificationStatus = await Permission.notification.status;
+    print('Notification status = $notificationStatus');
+
     if (!notificationStatus.isGranted) {
-      await Permission.notification.request();
+      notificationStatus = await Permission.notification.request();
+      print('Notification after request = $notificationStatus');
     }
 
     var alarmStatus = await Permission.scheduleExactAlarm.status;
+    print('Alarm status = $alarmStatus');
+
     if (!alarmStatus.isGranted) {
-      await Permission.scheduleExactAlarm.request();
+      alarmStatus = await Permission.scheduleExactAlarm.request();
+      print('Alarm after request = $alarmStatus');
     }
   }
 

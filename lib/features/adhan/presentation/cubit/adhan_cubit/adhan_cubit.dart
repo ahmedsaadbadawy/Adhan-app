@@ -43,7 +43,7 @@ class AdhanCubit extends Cubit<AdhanState> {
   }) {
     emit(AdhanLoading());
 
-    _notificationService.scheduleUpcomingPrayers( // TODO for the celebrities
+    _notificationService.scheduleUpcomingPrayers(
       adhanService: _adhanService,
       coordinates: coordinates,
       location: location,

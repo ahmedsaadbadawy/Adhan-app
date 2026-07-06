@@ -1,3 +1,5 @@
+import 'dart:developer' as developer;
+
 import 'package:adhan_dart/adhan_dart.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
@@ -10,13 +12,17 @@ import 'notafications_service.dart';
 @pragma('vm:entry-point')
 void callbackDispatcher() {
   Workmanager().executeTask((task, inputData) async {
-    print('========== WORKMANAGER STARTED WITH GET IT ==========');
     try {
+      developer.log('Task: $task', name: 'WorkManager');
+      print('========== WORKMANAGER STARTED WITH GET IT ==========');
       tz.initializeTimeZones();
+
+      final location = tz.getLocation(inputData!['timezoneName'] as String);
+
+      tz.setLocalLocation(location);
 
       await setupBackgroundDependencies();
 
-      final location = tz.getLocation(inputData!['timezoneName'] as String);
       final coordinates = Coordinates(
         inputData['latitude'] as double,
         inputData['longitude'] as double,
@@ -33,11 +39,16 @@ void callbackDispatcher() {
         location: location,
         force: true,
       );
-
-      print('========== WORKMANAGER FINISHED SUCCESSFULLY ==========');
+      print('========== WORKMANAGER FINISHED WITH GET IT ==========');
       return true;
-    } catch (e) {
-      print('========== WORKMANAGER CRASHED: $e ==========');
+    } catch (e, s) {
+      developer.log(
+        'Background task failed',
+        name: 'WorkManager',
+        error: e,
+        stackTrace: s,
+      );
+
       return false;
     }
   });
