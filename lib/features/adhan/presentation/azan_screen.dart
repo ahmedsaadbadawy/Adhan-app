@@ -7,7 +7,6 @@ import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
 import '../../../core/services/adhan_service.dart';
-import '../../../core/services/audio_service.dart';
 import 'cubit/adhan_cubit/adhan_cubit.dart';
 import 'widgets/adhan_remaining_time_bloc_builder.dart';
 
@@ -66,7 +65,7 @@ class AzanScreen extends StatelessWidget {
       ),
       body: BlocProvider(
         create: (context) =>
-            AdhanCubit(AdhanService(), AudioService(), NotificationService())
+            AdhanCubit(AdhanService(), NotificationService())
               ..start(coordinates: coordinates, location: location),
         child: ListView(
           padding: const EdgeInsets.all(16),
@@ -98,7 +97,7 @@ class AzanScreen extends StatelessWidget {
                 try {
                   final testTime = tz.TZDateTime.now(
                     location,
-                  ).add(const Duration(seconds: 3));
+                  ).add(const Duration(seconds: 5));
                   await NotificationService().scheduleForPrayer(
                     id: 999,
                     title: 'Test Prayer',
@@ -113,9 +112,24 @@ class AzanScreen extends StatelessWidget {
             ),
             // ElevatedButton(
             //   onPressed: () async {
-            //     AudioService.stop();
+            //     final prefs = await SharedPreferences.getInstance();
+            //     await prefs.setDouble('last_lat', 31.04);
+            //     await prefs.setDouble('last_lng', 31.38);
+            //     await prefs.setString('last_timezone', location.name);
+
+            //     await Workmanager().registerPeriodicTask(
+            //       'refresh-prayer-schedule',
+            //       'refreshPrayerSchedule',
+            //       frequency: const Duration(hours: 24),
+            //       existingWorkPolicy: ExistingPeriodicWorkPolicy.replace,
+            //       inputData: {
+            //         'latitude': 31.04, //TODO get the real location later
+            //         'longitude': 31.38,
+            //         'timezoneName': location.name,
+            //       },
+            //     );
             //   },
-            //   child: const Text('Stop adhan'),
+            //   child: const Text('Change location and its adhan'),
             // ),
             const Divider(height: 32),
             AdhanRemainingTimeBlocBuilder(),

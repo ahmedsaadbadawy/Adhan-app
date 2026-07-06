@@ -1,17 +1,39 @@
-import 'package:azan_app/core/services/notafications_service.dart';
+import 'package:azan_app/core/DI/service_allocator.dart';
+import 'package:azan_app/core/services/workmanager_dispatcher.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
+import 'package:workmanager/workmanager.dart';
 
 import 'core/app_router.dart';
+import 'core/services/notafications_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   tz.initializeTimeZones();
   tz.setLocalLocation(tz.getLocation('Africa/Cairo'));
-  final notificationService = NotificationService();
-  await notificationService.init();
+
+  await setupDependencyInjection();
+
+  final notificationService = getIt<NotificationService>();
+  await notificationService.init(requestPermissions: true);
+
+  ////TODO in the first get location place.
+  Workmanager().initialize(callbackDispatcher);
+  await Workmanager().registerPeriodicTask(
+    'refresh-prayer-schedule',
+    'refreshPrayerSchedule',
+    frequency: const Duration(hours: 24),
+    existingWorkPolicy: ExistingPeriodicWorkPolicy.replace,
+    inputData: {
+      'latitude': 31.04, //TODO get the real location later.
+      'longitude': 31.38,
+      'timezoneName': 'Africa/Cairo',
+    },
+  );
+
   runApp(const AzanApp());
 }
 

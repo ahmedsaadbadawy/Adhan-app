@@ -1,5 +1,4 @@
 import 'package:adhan_dart/adhan_dart.dart';
-import 'package:flutter/material.dart';
 import 'package:timezone/timezone.dart' as tz;
 
 import '../../features/adhan/domain/entities/adhan_status.dart';
@@ -11,12 +10,13 @@ class AdhanService {
     required Coordinates coordinates,
     required tz.Location location,
     CalculationParameters? calculationParameters,
+    DateTime? date,
   }) {
-    final now = tz.TZDateTime.now(location);
+    final targetDate = date ?? tz.TZDateTime.now(location);
 
     return PrayerTimes(
       coordinates: coordinates,
-      date: now,
+      date: targetDate,
       calculationParameters:
           calculationParameters ??
           (CalculationMethodParameters.muslimWorldLeague()

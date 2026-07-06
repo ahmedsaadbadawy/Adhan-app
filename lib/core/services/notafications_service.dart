@@ -1,9 +1,12 @@
 import 'package:adhan_dart/adhan_dart.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/timezone.dart' as tz;
+
+import 'adhan_service.dart';
 
 class NotificationService {
   static final NotificationService _instance = NotificationService._internal();
@@ -18,24 +21,28 @@ class NotificationService {
   static const _channelId = 'my_adhan_channel';
   static const _channelName = 'my_Adhan Notifications';
   static const _prefsKey = 'last_scheduled_date';
+  static const _daysAhead = 5;
 
-  Future<void> init() async {
+  Future<void> init({bool requestPermissions = true}) async {
     const androidSettings = AndroidInitializationSettings(
       '@mipmap/ic_launcher',
     );
+
     await _plugin.initialize(
       settings: InitializationSettings(android: androidSettings),
     );
-
-    await handleAppPermissions();
 
     final androidPlugin = _plugin
         .resolvePlatformSpecificImplementation<
           AndroidFlutterLocalNotificationsPlugin
         >();
 
-    await androidPlugin?.requestNotificationsPermission();
-    await androidPlugin?.requestExactAlarmsPermission();
+    if (requestPermissions) {
+      await handleAppPermissions();
+
+      await androidPlugin?.requestNotificationsPermission();
+      await androidPlugin?.requestExactAlarmsPermission();
+    }
 
     const channel = AndroidNotificationChannel(
       _channelId,
@@ -49,42 +56,58 @@ class NotificationService {
     await androidPlugin?.createNotificationChannel(channel);
   }
 
-  Future<void> scheduleTodaysPrayers({
-    required PrayerTimes prayerTimes,
+  Future<void> scheduleUpcomingPrayers({
+    required AdhanService adhanService,
+    required Coordinates coordinates,
     required tz.Location location,
+    CalculationParameters? calculationParameters,
     bool force = false,
   }) async {
     final prefs = await SharedPreferences.getInstance();
     final todayKey = DateFormat('yyyy-MM-dd').format(DateTime.now());
+    print('========== scheduleUpcomingPrayers START ==========');
 
     if (!force && prefs.getString(_prefsKey) == todayKey) {
       return;
     }
-
-    await cancelAllPrayerNotifications();
+    print('========== scheduleUpcomingPrayers START after force ==========');
 
     final now = tz.TZDateTime.now(location);
+    await cancelAllPrayerNotifications();
+    for (var dayOffset = 0; dayOffset < _daysAhead; dayOffset++) {
+      final targetDate = now.add(Duration(days: dayOffset));
 
-    final prayers = <int, MapEntry<String, DateTime>>{
-      1: MapEntry('Fajr', prayerTimes.fajr),
-      2: MapEntry('Dhuhr', prayerTimes.dhuhr),
-      3: MapEntry('Asr', prayerTimes.asr),
-      4: MapEntry('Maghrib', prayerTimes.maghrib),
-      5: MapEntry('Isha', prayerTimes.isha),
-    };
+      final prayerTimes = adhanService.getPrayerTimes(
+        coordinates: coordinates,
+        location: location,
+        calculationParameters: calculationParameters,
+        date: targetDate,
+      );
 
-    for (final entry in prayers.entries) {
-      final id = entry.key;
-      final name = entry.value.key;
-      final time = entry.value.value;
+      final prayers = <int, MapEntry<String, DateTime>>{
+        1: MapEntry('Fajr', prayerTimes.fajr),
+        2: MapEntry('Dhuhr', prayerTimes.dhuhr),
+        3: MapEntry('Asr', prayerTimes.asr),
+        4: MapEntry('Maghrib', prayerTimes.maghrib),
+        5: MapEntry('Isha', prayerTimes.isha),
+      };
 
-      final tzTime = tz.TZDateTime.from(time, location);
+      for (final entry in prayers.entries) {
+        final id = dayOffset * 10 + entry.key;
+        final name = entry.value.key;
+        final time = entry.value.value;
 
-      if (tzTime.isBefore(now)) {
-        continue;
+        final tzTime = tz.TZDateTime.from(time, location);
+
+        if (tzTime.isBefore(now)) {
+          continue;
+        }
+
+        await scheduleForPrayer(id: id, title: name, scheduledTime: tzTime);
+        print('🔔 تم جدولة صلاة بنجاح: في وقت: $tzTime');
+
+        debugPrint('Scheduling id=$id for $name at $tzTime');
       }
-
-      await scheduleForPrayer(id: id, title: name, scheduledTime: tzTime);
     }
 
     await prefs.setString(_prefsKey, todayKey);
@@ -109,27 +132,30 @@ class NotificationService {
           playSound: true,
           importance: Importance.max,
           priority: Priority.high,
+          ticker: 'ticker',
         ),
       ),
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
     );
   }
 
-  Future handleAppPermissions() async {
-    PermissionStatus notificationStatus = await Permission.notification.status;
+  Future<void> handleAppPermissions() async {
+    var notificationStatus = await Permission.notification.status;
     if (!notificationStatus.isGranted) {
-      notificationStatus = await Permission.notification.request();
+      await Permission.notification.request();
     }
 
-    PermissionStatus alarmStatus = await Permission.scheduleExactAlarm.status;
+    var alarmStatus = await Permission.scheduleExactAlarm.status;
     if (!alarmStatus.isGranted) {
       await Permission.scheduleExactAlarm.request();
     }
   }
 
   Future<void> cancelAllPrayerNotifications() async {
-    for (final id in [1, 2, 3, 4, 5]) {
-      await _plugin.cancel(id: id);
+    for (var dayOffset = 0; dayOffset < _daysAhead; dayOffset++) {
+      for (final baseId in [1, 2, 3, 4, 5]) {
+        await _plugin.cancel(id: dayOffset * 10 + baseId);
+      }
     }
   }
 }
