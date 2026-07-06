@@ -6,6 +6,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/timezone.dart' as tz;
 
+import '../helpers/islamic_events_scheduler.dart';
 import 'adhan_service.dart';
 
 class NotificationService {
@@ -38,7 +39,7 @@ class NotificationService {
         >();
 
     if (requestPermissions) {
-      await handleAppPermissions();
+      await handleNotificationsPermissions();
 
       await androidPlugin?.requestNotificationsPermission();
       await androidPlugin?.requestExactAlarmsPermission();
@@ -83,13 +84,7 @@ class NotificationService {
         date: targetDate,
       );
 
-      final prayers = <int, MapEntry<String, DateTime>>{
-        1: MapEntry('Fajr', prayerTimes.fajr),
-        2: MapEntry('Dhuhr', prayerTimes.dhuhr),
-        3: MapEntry('Asr', prayerTimes.asr),
-        4: MapEntry('Maghrib', prayerTimes.maghrib),
-        5: MapEntry('Isha', prayerTimes.isha),
-      };
+      final prayers = _buildPrayerMap(prayerTimes);
 
       for (final entry in prayers.entries) {
         final id = dayOffset * 10 + entry.key;
@@ -116,21 +111,57 @@ class NotificationService {
     required int id,
     required String title,
     required tz.TZDateTime scheduledTime,
+  }) {
+    return scheduleNotification(
+      id: id,
+      title: title,
+      body: "It's time for $title prayer",
+      scheduledTime: scheduledTime,
+    );
+  }
+
+  Future<void> scheduleIslamicEvents() async {
+    final scheduler = const IslamicEventsScheduler();
+
+    final events = await scheduler.loadEvents();
+    final now = tz.TZDateTime.now(tz.local);
+
+    for (final event in events) {
+      final scheduled = tz.TZDateTime.from(event.date, tz.local);
+
+      if (scheduled.isBefore(now)) continue;
+
+      await scheduleNotification(
+        id: event.id,
+        title: event.title,
+        body: event.body,
+        scheduledTime: scheduled,
+      );
+      print('🔔 تم جدولة [حدث] بنجاح: في وقت: $scheduled');
+      debugPrint('Scheduling id=${event.id} for ${event.title} at $scheduled');
+    }
+  }
+
+  Future<void> scheduleNotification({
+    required int id,
+    required String title,
+    required String body,
+    required tz.TZDateTime scheduledTime,
   }) async {
     await _plugin.zonedSchedule(
       id: id,
       title: title,
-      body: "It's time for $title prayer",
+      body: body,
       scheduledDate: scheduledTime,
       notificationDetails: const NotificationDetails(
         android: AndroidNotificationDetails(
           _channelId,
           _channelName,
-          channelDescription: 'Notifications for prayer times',
-          sound: RawResourceAndroidNotificationSound('adhan'),
-          playSound: true,
+          channelDescription: 'Notifications',
           importance: Importance.max,
           priority: Priority.high,
+          playSound: true,
+          sound: RawResourceAndroidNotificationSound('adhan'),
           ticker: 'ticker',
         ),
       ),
@@ -138,7 +169,27 @@ class NotificationService {
     );
   }
 
-  Future<void> handleAppPermissions() async {
+  Future<void> cancelAllPrayerNotifications() async {
+    for (var dayOffset = 0; dayOffset < _daysAhead; dayOffset++) {
+      for (final baseId in [1, 2, 3, 4, 5]) {
+        await _plugin.cancel(id: dayOffset * 10 + baseId);
+      }
+    }
+  }
+
+  Map<int, MapEntry<String, DateTime>> _buildPrayerMap(
+    PrayerTimes prayerTimes,
+  ) {
+    return <int, MapEntry<String, DateTime>>{
+      1: MapEntry('Fajr', prayerTimes.fajr),
+      2: MapEntry('Dhuhr', prayerTimes.dhuhr),
+      3: MapEntry('Asr', prayerTimes.asr),
+      4: MapEntry('Maghrib', prayerTimes.maghrib),
+      5: MapEntry('Isha', prayerTimes.isha),
+    };
+  }
+
+  Future<void> handleNotificationsPermissions() async {
     print("NotificationService.init() called");
     var notificationStatus = await Permission.notification.status;
     print('Notification status = $notificationStatus');
@@ -154,14 +205,6 @@ class NotificationService {
     if (!alarmStatus.isGranted) {
       alarmStatus = await Permission.scheduleExactAlarm.request();
       print('Alarm after request = $alarmStatus');
-    }
-  }
-
-  Future<void> cancelAllPrayerNotifications() async {
-    for (var dayOffset = 0; dayOffset < _daysAhead; dayOffset++) {
-      for (final baseId in [1, 2, 3, 4, 5]) {
-        await _plugin.cancel(id: dayOffset * 10 + baseId);
-      }
     }
   }
 }

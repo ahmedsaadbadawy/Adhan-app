@@ -5,7 +5,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
-import 'package:workmanager/workmanager.dart';
 
 import '../../../core/services/adhan_service.dart';
 import 'cubit/adhan_cubit/adhan_cubit.dart';
@@ -111,25 +110,25 @@ class AzanScreen extends StatelessWidget {
               },
               child: const Text('Test notification in 3s'),
             ),
-            ElevatedButton(
-              onPressed: () async {
-                // final prefs = await SharedPreferences.getInstance();
-                // await prefs.setDouble('last_lat', 31.04);
-                // await prefs.setDouble('last_lng', 31.38);
-                // await prefs.setString('last_timezone', location.name);
+            // ElevatedButton(
+            //   onPressed: () async {
+            //     // final prefs = await SharedPreferences.getInstance();
+            //     // await prefs.setDouble('last_lat', 31.04);
+            //     // await prefs.setDouble('last_lng', 31.38);
+            //     // await prefs.setString('last_timezone', location.name);
 
-                await Workmanager().registerOneOffTask(
-                  'test-run',
-                  'refreshPrayerSchedule',
-                  inputData: {
-                    'latitude': 31.04,
-                    'longitude': 31.38,
-                    'timezoneName': 'Africa/Cairo',
-                  },
-                );
-              },
-              child: const Text('Change location and its adhan'),
-            ),
+            //     await Workmanager().registerOneOffTask(
+            //       'test-run',
+            //       'refreshPrayerSchedule',
+            //       inputData: {
+            //         'latitude': 31.04,
+            //         'longitude': 31.38,
+            //         'timezoneName': 'Africa/Cairo',
+            //       },
+            //     );
+            //   },
+            //   child: const Text('Change location and its adhan'),
+            // ),
             const Divider(height: 32),
             AdhanRemainingTimeBlocBuilder(),
           ],

@@ -1,0 +1,42 @@
+[
+  {
+    "id": 1003,
+    "title": "Mawlid an-Nabi ﷺ",
+    "body": "Today is the blessed birth anniversary of Prophet Muhammad ﷺ.",
+    "date": "2026-09-25",
+    "hour": 8,
+    "minute": 0
+  },
+  {
+    "id": 1004,
+    "title": "Ramadan Mubarak!",
+    "body": "Ramadan Mubarak! May Allah accept your fasting and worship.",
+    "date": "2027-02-08",
+    "hour": 0,
+    "minute": 5
+  },
+  {
+    "id": 1006,
+    "title": "Eid al-Fitr",
+    "body": "Eid Mubarak! May Allah accept your fasting and bless you and your family.",
+    "date": "2027-03-20",
+    "hour": 6,
+    "minute": 0
+  },
+  {
+    "id": 1007,
+    "title": "Day of Arafah",
+    "body": "Today is the Day of Arafah. Increase your du'a and fasting if you are not performing Hajj.",
+    "date": "2027-05-16",
+    "hour": 7,
+    "minute": 0
+  },
+  {
+    "id": 1008,
+    "title": "Eid al-Adha",
+    "body": "Eid Mubarak! May Allah accept your sacrifices and good deeds.",
+    "date": "2027-05-17",
+    "hour": 6,
+    "minute": 0
+  }
+]

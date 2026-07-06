@@ -59,12 +59,6 @@ class AdhanCubit extends Cubit<AdhanState> {
           calculationParameters: calculationParameters,
         )
         .listen((adhanStatus) async {
-          // if (adhanStatus.shouldPlayAdhan) {
-          //   await _audioService.playSound('sounds/adhan.mp3').catchError((e) {
-          //     debugPrint('Failed to play adhan audio: $e');
-          //   });
-          // }
-
           emit(AdhanSuccess(adhanStatus: adhanStatus));
         });
   }

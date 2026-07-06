@@ -19,13 +19,13 @@ void main() async {
 
   final notificationService = getIt<NotificationService>();
   await notificationService.init(requestPermissions: true);
-
+  await notificationService.scheduleIslamicEvents();
   ////TODO in the first get location place.
-  Workmanager().initialize(callbackDispatcher);
+  await Workmanager().initialize(callbackDispatcher);
   await Workmanager().registerPeriodicTask(
     'refresh-prayer-schedule',
     'refreshPrayerSchedule',
-    frequency: const Duration(hours: 24),
+    frequency: const Duration(minutes: 24),
     existingWorkPolicy: ExistingPeriodicWorkPolicy.replace,
     inputData: {
       'latitude': 31.04, //TODO get the real location later.
