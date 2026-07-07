@@ -25,7 +25,7 @@ void main() async {
   await Workmanager().registerPeriodicTask(
     'refresh-prayer-schedule',
     'refreshPrayerSchedule',
-    frequency: const Duration(minutes: 24),
+    frequency: const Duration(hours: 24),
     existingWorkPolicy: ExistingPeriodicWorkPolicy.replace,
     inputData: {
       'latitude': 31.04, //TODO get the real location later.

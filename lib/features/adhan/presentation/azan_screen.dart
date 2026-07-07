@@ -1,4 +1,5 @@
 import 'package:adhan_dart/adhan_dart.dart';
+import 'package:azan_app/core/DI/service_allocator.dart';
 import 'package:azan_app/core/services/notafications_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -51,6 +52,10 @@ class AzanScreen extends StatelessWidget {
       );
     }
 
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      getIt<NotificationService>().checkAndRequestBatteryOptimization(context);
+    });
+    
     return Scaffold(
       appBar: AppBar(
         title: const Text(

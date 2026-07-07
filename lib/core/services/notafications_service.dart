@@ -162,6 +162,7 @@ class NotificationService {
           priority: Priority.high,
           playSound: true,
           sound: RawResourceAndroidNotificationSound('adhan'),
+          visibility: NotificationVisibility.public,
           ticker: 'ticker',
         ),
       ),
@@ -205,6 +206,45 @@ class NotificationService {
     if (!alarmStatus.isGranted) {
       alarmStatus = await Permission.scheduleExactAlarm.request();
       print('Alarm after request = $alarmStatus');
+    }
+  }
+
+  Future<void> checkAndRequestBatteryOptimization(BuildContext context) async {
+    final isGranted = await Permission.ignoreBatteryOptimizations.isGranted;
+
+    if (!isGranted) {
+      if (!context.mounted) return;
+
+      final shouldRequest = await showDialog<bool>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Disable Battery Optimization'),
+          content: const Text(
+            'To ensure you receive Adhan notifications accurately even when your phone is locked or asleep, please allow the app to ignore battery optimizations.',
+            style: TextStyle(color: Colors.grey),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('Later'),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: const Text('Allow'),
+            ),
+          ],
+        ),
+      );
+
+      if (shouldRequest == true) {
+        final status = await Permission.ignoreBatteryOptimizations.request();
+
+        if (status.isGranted) {
+          print('Battery optimization disabled for this app.');
+        } else {
+          print('User declined to disable battery optimization.');
+        }
+      }
     }
   }
 }
