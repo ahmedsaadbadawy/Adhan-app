@@ -17,3 +17,5 @@
 
 # Shared Preferences & JSON (Often used internally by plugins for background data)
 -keep class com.google.gson.** { *; }
+
+-dontwarn com.google.android.play.core.**

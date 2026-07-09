@@ -1,6 +1,7 @@
 import 'package:adhan_dart/adhan_dart.dart';
 import 'package:azan_app/core/DI/service_allocator.dart';
-import 'package:azan_app/core/services/notafications_service.dart';
+import 'package:azan_app/core/services/notifications/notification_permission_handler.dart';
+import 'package:azan_app/core/services/notifications/prayer_notification_scheduler.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -52,10 +53,17 @@ class AzanScreen extends StatelessWidget {
       );
     }
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      getIt<NotificationService>().checkAndRequestBatteryOptimization(context);
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final notificationPermissionHandler =
+          getIt<NotificationPermissionHandler>();
+      // await notificationPermissionHandler.checkAndRequestExactAlarmPermission(context);
+      // if (context.mounted) {
+      await notificationPermissionHandler.checkAndRequestBatteryOptimization(
+        context,
+      );
+      // }
     });
-    
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -70,7 +78,7 @@ class AzanScreen extends StatelessWidget {
       ),
       body: BlocProvider(
         create: (context) =>
-            AdhanCubit(AdhanService(), NotificationService())
+            AdhanCubit(AdhanService(), PrayerNotificationScheduler())
               ..start(coordinates: coordinates, location: location),
         child: ListView(
           padding: const EdgeInsets.all(16),
@@ -103,7 +111,7 @@ class AzanScreen extends StatelessWidget {
                   final testTime = tz.TZDateTime.now(
                     location,
                   ).add(const Duration(seconds: 10));
-                  await NotificationService().scheduleForPrayer(
+                  await getIt<PrayerNotificationScheduler>().scheduleForPrayer(
                     id: 999,
                     title: 'Test Prayer',
                     scheduledTime: testTime,

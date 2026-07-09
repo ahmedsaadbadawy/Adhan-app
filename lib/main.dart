@@ -7,7 +7,8 @@ import 'package:timezone/timezone.dart' as tz;
 import 'package:workmanager/workmanager.dart';
 
 import 'core/app_router.dart';
-import 'core/services/notafications_service.dart';
+import 'core/services/notifications/islamic_events_notification_scheduler.dart';
+import 'core/services/notifications/notafications_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,13 +20,16 @@ void main() async {
 
   final notificationService = getIt<NotificationService>();
   await notificationService.init(requestPermissions: true);
-  await notificationService.scheduleIslamicEvents();
+
+  final islamicEventsNotificationScheduler =
+      getIt<IslamicEventsNotificationScheduler>();
+  await islamicEventsNotificationScheduler.scheduleIslamicEvents();
   ////TODO in the first get location place.
   await Workmanager().initialize(callbackDispatcher);
   await Workmanager().registerPeriodicTask(
     'refresh-prayer-schedule',
     'refreshPrayerSchedule',
-    frequency: const Duration(hours: 24),
+    frequency: const Duration(minutes: 15),
     existingWorkPolicy: ExistingPeriodicWorkPolicy.replace,
     inputData: {
       'latitude': 31.04, //TODO get the real location later.

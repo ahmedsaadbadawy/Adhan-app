@@ -7,18 +7,18 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:timezone/timezone.dart' as tz;
 
 import '../../../../../core/services/adhan_service.dart';
-import '../../../../../core/services/notafications_service.dart';
+import '../../../../../core/services/notifications/prayer_notification_scheduler.dart';
 import '../../../domain/entities/adhan_status.dart';
 
 part 'adhan_state.dart';
 
 class AdhanCubit extends Cubit<AdhanState> {
-  AdhanCubit(this._adhanService, this._notificationService)
+  AdhanCubit(this._adhanService, this._prayerNotificationScheduler)
     : super(AdhanInitial());
 
   final AdhanService _adhanService;
   // final AudioService _audioService;
-  final NotificationService _notificationService;
+  final PrayerNotificationScheduler _prayerNotificationScheduler;
 
   StreamSubscription<AdhanStatus>? _subscription;
 
@@ -43,7 +43,7 @@ class AdhanCubit extends Cubit<AdhanState> {
   }) {
     emit(AdhanLoading());
 
-    _notificationService.scheduleUpcomingPrayers(
+    _prayerNotificationScheduler.scheduleUpcomingPrayers(
       adhanService: _adhanService,
       coordinates: coordinates,
       location: location,

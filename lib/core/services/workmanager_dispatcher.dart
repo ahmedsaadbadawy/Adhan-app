@@ -7,7 +7,8 @@ import 'package:workmanager/workmanager.dart';
 
 import '../DI/service_allocator.dart';
 import 'adhan_service.dart';
-import 'notafications_service.dart';
+import 'notifications/notafications_service.dart';
+import 'notifications/prayer_notification_scheduler.dart';
 
 @pragma('vm:entry-point')
 void callbackDispatcher() {
@@ -29,11 +30,12 @@ void callbackDispatcher() {
       );
 
       final notificationService = getIt<NotificationService>();
+      final prayerNotificationScheduler = getIt<PrayerNotificationScheduler>();
       final adhanService = getIt<AdhanService>();
 
       await notificationService.init(requestPermissions: false);
 
-      await notificationService.scheduleUpcomingPrayers(
+      await prayerNotificationScheduler.scheduleUpcomingPrayers(
         adhanService: adhanService,
         coordinates: coordinates,
         location: location,
