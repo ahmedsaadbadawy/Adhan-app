@@ -7,6 +7,7 @@ import 'package:timezone/timezone.dart' as tz;
 import 'package:workmanager/workmanager.dart';
 
 import 'core/app_router.dart';
+import 'core/services/audio/audio_initializer.dart';
 import 'core/services/notifications/islamic_events_notification_scheduler.dart';
 import 'core/services/notifications/notafications_service.dart';
 
@@ -15,6 +16,14 @@ void main() async {
 
   tz.initializeTimeZones();
   tz.setLocalLocation(tz.getLocation('Africa/Cairo'));
+
+  try {
+    await AudioInitializer.init();
+    debugPrint('Audio initialized');
+  } catch (e, s) {
+    debugPrint('Audio init failed: $e');
+    debugPrint('$s');
+  }
 
   await setupDependencyInjection();
 

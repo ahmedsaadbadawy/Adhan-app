@@ -1,4 +1,5 @@
 import 'package:azan_app/core/services/adhan_service.dart';
+import 'package:azan_app/core/services/audio/audio_player_service.dart';
 import 'package:azan_app/core/services/notifications/islamic_events_notification_scheduler.dart';
 import 'package:azan_app/core/services/notifications/notafications_service.dart';
 import 'package:azan_app/core/services/notifications/notification_permission_handler.dart';
@@ -8,6 +9,10 @@ import 'package:get_it/get_it.dart';
 final getIt = GetIt.instance;
 
 Future<void> setupDependencyInjection() async {
+  if (!getIt.isRegistered<AudioPlayerService>()) {
+    getIt.registerLazySingleton<AudioPlayerService>(() => AudioPlayerService());
+  }
+
   if (!getIt.isRegistered<AdhanService>()) {
     getIt.registerSingleton<AdhanService>(const AdhanService());
   }

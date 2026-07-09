@@ -9,6 +9,9 @@ import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
 import '../../../core/services/adhan_service.dart';
+import '../../../core/services/audio/audio_player_service.dart';
+import '../../background_sound/presentation/cubit/quran_player_cubit/quran_player_cubit.dart';
+import '../../background_sound/presentation/views/quran_player_screen.dart';
 import 'cubit/adhan_cubit/adhan_cubit.dart';
 import 'widgets/adhan_remaining_time_bloc_builder.dart';
 
@@ -122,6 +125,21 @@ class AzanScreen extends StatelessWidget {
                 }
               },
               child: const Text('Test notification in 3s'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                await Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => BlocProvider(
+                      create: (_) => QuranPlayerCubit(
+                        audioService: getIt<AudioPlayerService>(),
+                      )..initialize(),
+                      child: QuranPlayerScreen(),
+                    ),
+                  ),
+                );
+              },
+              child: const Text('Play Sound Screen'),
             ),
             // ElevatedButton(
             //   onPressed: () async {
