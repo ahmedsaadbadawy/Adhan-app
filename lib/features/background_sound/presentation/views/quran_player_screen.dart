@@ -1,10 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../../core/services/audio/audio_model.dart';
 import '../cubit/quran_player_cubit/quran_player_cubit.dart';
 
 class QuranPlayerScreen extends StatelessWidget {
   const QuranPlayerScreen({super.key});
+
+  static final _testPlaylist = [
+    AudioModel(
+      id: 'https://server7.mp3quran.net/basit/Almusshaf-Al-Mojawwad/001.mp3',
+      url: 'https://server7.mp3quran.net/basit/Almusshaf-Al-Mojawwad/001.mp3',
+      title: 'Al-Fatiha',
+      artist: 'Ahmed',
+    ),
+    AudioModel(
+      id: 'https://server7.mp3quran.net/basit/Almusshaf-Al-Mojawwad/002.mp3',
+      url: 'https://server7.mp3quran.net/basit/Almusshaf-Al-Mojawwad/002.mp3',
+      title: 'Al-Baqarah',
+      artist: 'Ahmed',
+    ),
+    AudioModel(
+      id: 'https://server7.mp3quran.net/basit/Almusshaf-Al-Mojawwad/007.mp3',
+      url: 'https://server7.mp3quran.net/basit/Almusshaf-Al-Mojawwad/007.mp3',
+      title: "Al-A'raf",
+      artist: 'Ahmed',
+    ),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -27,6 +49,15 @@ class QuranPlayerScreen extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
+
+                if (state.playlist.isNotEmpty) ...[
+                  const SizedBox(height: 8),
+                  Text(
+                    'Track ${state.currentIndex + 1}/${state.playlist.length}: '
+                    '${state.playlist[state.currentIndex].title}',
+                    style: const TextStyle(fontSize: 16),
+                  ),
+                ],
 
                 const SizedBox(height: 30),
 
@@ -62,6 +93,28 @@ class QuranPlayerScreen extends StatelessWidget {
                     ElevatedButton(
                       onPressed: cubit.stop,
                       child: const Text('Stop'),
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 20),
+
+                Wrap(
+                  spacing: 12,
+                  runSpacing: 12,
+                  alignment: WrapAlignment.center,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () => cubit.playPlaylist(_testPlaylist),
+                      child: const Text('Play Playlist'),
+                    ),
+                    ElevatedButton(
+                      onPressed: cubit.playPrevious,
+                      child: const Text('Previous'),
+                    ),
+                    ElevatedButton(
+                      onPressed: cubit.playNext,
+                      child: const Text('Next'),
                     ),
                   ],
                 ),

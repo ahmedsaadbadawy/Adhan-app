@@ -28,6 +28,10 @@ class AudioPlayerService {
 
   Stream<double> get speedStream => _player.speedStream;
 
+  Stream<int?> get currentIndexStream => _player.currentIndexStream;
+
+  Stream<MediaItem?> get currentMediaItemStream => _handler.mediaItem;
+
   bool get isPlaying => _player.playing;
 
   Duration get position => _player.position;
@@ -47,6 +51,48 @@ class AudioPlayerService {
     );
 
     await _handler.setSource(url: track.url, media: media);
+  }
+
+  Future<void> loadPlaylist({
+    required List<AudioModel> tracks,
+    int initialIndex = 0,
+  }) async {
+    final mediaItems = tracks
+        .map(
+          (track) => MediaItem(
+            id: track.id,
+            title: track.title,
+            artist: track.artist,
+            artUri: track.artUri == null ? null : Uri.parse(track.artUri!),
+          ),
+        )
+        .toList();
+
+    await _handler.setPlaylist(
+      urls: tracks.map((track) => track.url).toList(),
+      mediaItems: mediaItems,
+      initialIndex: initialIndex,
+    );
+  }
+
+  Future<void> playPlaylist({
+    required List<AudioModel> tracks,
+    int initialIndex = 0,
+  }) async {
+    await loadPlaylist(tracks: tracks, initialIndex: initialIndex);
+    await play();
+  }
+
+  Future<void> skipToNext() async {
+    await _handler.skipToNext();
+  }
+
+  Future<void> skipToPrevious() async {
+    await _handler.skipToPrevious();
+  }
+
+  Future<void> skipToIndex(int index) async {
+    await _handler.skipToQueueItem(index);
   }
 
   Future<void> play() async {

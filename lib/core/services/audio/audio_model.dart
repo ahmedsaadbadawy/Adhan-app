@@ -1,3 +1,5 @@
+import 'package:audio_service/audio_service.dart';
+
 class AudioModel {
   const AudioModel({
     required this.id,
@@ -14,4 +16,16 @@ class AudioModel {
   final String artist;
   final String album;
   final String? artUri;
+}
+
+extension AudioModelMediaItem on AudioModel {
+  MediaItem toMediaItem() {
+    return MediaItem(
+      id: id,
+      title: title,
+      artist: artist,
+      album: album,
+      artUri: artUri == null ? null : Uri.parse(artUri!),
+    );
+  }
 }

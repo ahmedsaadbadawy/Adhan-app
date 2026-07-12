@@ -41,6 +41,33 @@ class QuranAudioHandler extends BaseAudioHandler
     _broadcastState();
   }
 
+  Future<void> setPlaylist({
+    required List<String> urls,
+    required List<MediaItem> mediaItems,
+    int initialIndex = 0,
+  }) async {
+    await _player.setAudioSources(
+      urls.map((url) => AudioSource.uri(Uri.parse(url))).toList(),
+      initialIndex: initialIndex,
+    );
+
+    _initialized = true;
+
+    queue.add(mediaItems);
+    mediaItem.add(mediaItems[initialIndex]);
+
+    _broadcastState();
+  }
+
+  @override
+  Future<void> skipToQueueItem(int index) async {
+    final currentQueue = queue.value;
+
+    if (index < 0 || index >= currentQueue.length) return;
+
+    await _player.seek(Duration.zero, index: index);
+  }
+
   void _listenToPlayer() {
     _playerStateSubscription = _player.playerStateStream.listen((_) {
       _broadcastState();
@@ -58,7 +85,12 @@ class QuranAudioHandler extends BaseAudioHandler
       mediaItem.add(current.copyWith(duration: duration));
     });
 
-    _indexSubscription = _player.currentIndexStream.listen((_) {
+    _indexSubscription = _player.currentIndexStream.listen((index) {
+      final currentQueue = queue.value;
+
+      if (index != null && index >= 0 && index < currentQueue.length) {
+        mediaItem.add(currentQueue[index]);
+      }
       _broadcastState();
     });
   }
@@ -133,7 +165,6 @@ class QuranAudioHandler extends BaseAudioHandler
     await _player.seek(Duration.zero);
 
     _broadcastState();
-    return super.stop();
   }
 
   @override

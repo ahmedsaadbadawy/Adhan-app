@@ -113,7 +113,7 @@ class AzanScreen extends StatelessWidget {
                 try {
                   final testTime = tz.TZDateTime.now(
                     location,
-                  ).add(const Duration(seconds: 10));
+                  ).add(const Duration(seconds: 3));
                   await getIt<PrayerNotificationScheduler>().scheduleForPrayer(
                     id: 999,
                     title: 'Test Prayer',

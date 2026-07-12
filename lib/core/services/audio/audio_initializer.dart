@@ -9,8 +9,7 @@ class AudioInitializer {
   static late final QuranAudioHandler handler;
 
   static Future<void> init() async {
-    final session = await AudioSession.instance; //TODO Use it & how to use the play lists
-
+    final session = await AudioSession.instance;
     await session.configure(const AudioSessionConfiguration.speech());
 
     handler = await AudioService.init<QuranAudioHandler>(
@@ -22,5 +21,13 @@ class AudioInitializer {
         androidShowNotificationBadge: true,
       ),
     );
+
+    _setupSessionListeners(session);
+  }
+
+  static void _setupSessionListeners(AudioSession session) {
+    session.becomingNoisyEventStream.listen((_) async {
+      await handler.pause();
+    });
   }
 }
