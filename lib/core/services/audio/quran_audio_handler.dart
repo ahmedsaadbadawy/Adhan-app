@@ -119,9 +119,19 @@ class QuranAudioHandler extends BaseAudioHandler
     _broadcastState();
   }
 
+  // @override
+  // Future<void> stop() async {
+  //   await _player.pause();
+  //   await _player.seek(Duration.zero);
+
+  //   _broadcastState();
+  // }
+
   @override
   Future<void> stop() async {
     await _player.stop();
+    await _player.seek(Duration.zero);
+
     _broadcastState();
     return super.stop();
   }
@@ -157,7 +167,7 @@ class QuranAudioHandler extends BaseAudioHandler
   Future<void> onTaskRemoved() async {
     // Keep playback alive when the UI task is removed.
     // The user can stop playback from the notification.
-    await _player.stop();
+    // await _player.stop();
   }
 
   Future<void> close() async {

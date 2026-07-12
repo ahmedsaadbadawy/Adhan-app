@@ -31,10 +31,10 @@ class QuranPlayerScreen extends StatelessWidget {
                 const SizedBox(height: 30),
 
                 Slider(
-                  value: state.position.inMilliseconds.toDouble(),
-                  max: state.duration.inMilliseconds <= 0
+                  value: state.position.inSeconds.toDouble(),
+                  max: state.duration.inSeconds <= 0
                       ? 1
-                      : state.duration.inMilliseconds.toDouble(),
+                      : state.duration.inSeconds.toDouble(),
                   onChanged: (value) {
                     cubit.seek(value);
                   },
@@ -58,10 +58,6 @@ class QuranPlayerScreen extends StatelessWidget {
                     ElevatedButton(
                       onPressed: cubit.pause,
                       child: const Text('Pause'),
-                    ),
-                    ElevatedButton(
-                      onPressed: cubit.resume,
-                      child: const Text('Resume'),
                     ),
                     ElevatedButton(
                       onPressed: cubit.stop,

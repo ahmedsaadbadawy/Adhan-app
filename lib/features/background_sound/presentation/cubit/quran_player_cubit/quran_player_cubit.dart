@@ -1,9 +1,9 @@
 import 'dart:async';
 
-import 'package:azan_app/core/services/audio/audio_model.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../../core/services/audio/audio_model.dart';
 import '../../../../../core/services/audio/audio_player_service.dart';
 
 part 'quran_player_state.dart';
@@ -44,12 +44,10 @@ class QuranPlayerCubit extends Cubit<QuranPlayerState> {
 
   Future<void> pause() => _audioService.pause();
 
-  Future<void> resume() => _audioService.resume();
-
   Future<void> stop() => _audioService.stop();
 
   Future<void> seek(double value) {
-    return _audioService.seek(Duration(milliseconds: value.toInt()));
+    return _audioService.seek(Duration(seconds: value.toInt()));
   }
 
   @override

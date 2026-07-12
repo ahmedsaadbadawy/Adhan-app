@@ -57,12 +57,12 @@ class AudioPlayerService {
     await _handler.pause();
   }
 
-  Future<void> resume() async {
-    await _handler.play();
-  }
-
   Future<void> stop() async {
     await _handler.stop();
+  }
+
+  Future<void> close() async {
+    await _handler.close();
   }
 
   Future<void> seek(Duration position) async {

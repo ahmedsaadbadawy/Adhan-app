@@ -9,9 +9,9 @@ class AudioInitializer {
   static late final QuranAudioHandler handler;
 
   static Future<void> init() async {
-    final session = await AudioSession.instance;
+    final session = await AudioSession.instance; //TODO Use it & how to use the play lists
 
-    await session.configure(const AudioSessionConfiguration.music());
+    await session.configure(const AudioSessionConfiguration.speech());
 
     handler = await AudioService.init<QuranAudioHandler>(
       builder: () => QuranAudioHandler(),
