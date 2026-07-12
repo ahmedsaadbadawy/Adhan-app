@@ -1,32 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../../core/services/audio/audio_model.dart';
+import '../../data/sounds_datasourse.dart';
 import '../cubit/quran_player_cubit/quran_player_cubit.dart';
 
 class QuranPlayerScreen extends StatelessWidget {
   const QuranPlayerScreen({super.key});
-
-  static final _testPlaylist = [
-    AudioModel(
-      id: 'https://server7.mp3quran.net/basit/Almusshaf-Al-Mojawwad/001.mp3',
-      url: 'https://server7.mp3quran.net/basit/Almusshaf-Al-Mojawwad/001.mp3',
-      title: 'Al-Fatiha',
-      artist: 'Abdu Albasit',
-    ),
-    AudioModel(
-      id: 'https://server7.mp3quran.net/basit/Almusshaf-Al-Mojawwad/002.mp3',
-      url: 'https://server7.mp3quran.net/basit/Almusshaf-Al-Mojawwad/002.mp3',
-      title: 'Al-Baqarah',
-      artist: 'Abdu Albasit',
-    ),
-    AudioModel(
-      id: 'https://server7.mp3quran.net/basit/Almusshaf-Al-Mojawwad/007.mp3',
-      url: 'https://server7.mp3quran.net/basit/Almusshaf-Al-Mojawwad/007.mp3',
-      title: "Al-A'raf",
-      artist: 'Abdu Albasit',
-    ),
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -105,7 +84,8 @@ class QuranPlayerScreen extends StatelessWidget {
                   alignment: WrapAlignment.center,
                   children: [
                     ElevatedButton(
-                      onPressed: () => cubit.playPlaylist(_testPlaylist),
+                      onPressed: () =>
+                          cubit.playPlaylist(SoundsDatasourse.testPlaylist),
                       child: const Text('Play Playlist'),
                     ),
                     ElevatedButton(
@@ -117,6 +97,27 @@ class QuranPlayerScreen extends StatelessWidget {
                       child: const Text('Next'),
                     ),
                   ],
+                ),
+                SizedBox(height: 20),
+                Container(
+                  height: MediaQuery.of(context).size.height * 0.3,
+                  width: MediaQuery.of(context).size.width,
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    border: Border.all(width: 0.2),
+                    borderRadius: BorderRadius.circular(16),
+                    color: Colors.white,
+                    boxShadow: const [
+                      BoxShadow(blurRadius: 3, offset: Offset(0, 1)),
+                    ],
+                  ),
+                  child: Center(
+                    child: Text(
+                      SoundsDatasourse.testPlaylist[state.currentIndex].url,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 16),
+                    ),
+                  ),
                 ),
               ],
             ),
