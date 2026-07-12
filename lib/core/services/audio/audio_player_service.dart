@@ -43,34 +43,16 @@ class AudioPlayerService {
   double get speed => _player.speed;
 
   Future<void> load({required AudioModel track}) async {
-    final media = MediaItem(
-      id: track.id,
-      title: track.title,
-      artist: track.artist,
-      artUri: track.artUri == null ? null : Uri.parse(track.artUri!),
-    );
-
-    await _handler.setSource(url: track.url, media: media);
+    await _handler.setSource(url: track.url, media: track.toMediaItem());
   }
 
   Future<void> loadPlaylist({
     required List<AudioModel> tracks,
     int initialIndex = 0,
   }) async {
-    final mediaItems = tracks
-        .map(
-          (track) => MediaItem(
-            id: track.id,
-            title: track.title,
-            artist: track.artist,
-            artUri: track.artUri == null ? null : Uri.parse(track.artUri!),
-          ),
-        )
-        .toList();
-
     await _handler.setPlaylist(
       urls: tracks.map((track) => track.url).toList(),
-      mediaItems: mediaItems,
+      mediaItems: tracks.map((track) => track.toMediaItem()).toList(),
       initialIndex: initialIndex,
     );
   }

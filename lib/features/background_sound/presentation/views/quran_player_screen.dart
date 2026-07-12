@@ -12,19 +12,19 @@ class QuranPlayerScreen extends StatelessWidget {
       id: 'https://server7.mp3quran.net/basit/Almusshaf-Al-Mojawwad/001.mp3',
       url: 'https://server7.mp3quran.net/basit/Almusshaf-Al-Mojawwad/001.mp3',
       title: 'Al-Fatiha',
-      artist: 'Ahmed',
+      artist: 'Abdu Albasit',
     ),
     AudioModel(
       id: 'https://server7.mp3quran.net/basit/Almusshaf-Al-Mojawwad/002.mp3',
       url: 'https://server7.mp3quran.net/basit/Almusshaf-Al-Mojawwad/002.mp3',
       title: 'Al-Baqarah',
-      artist: 'Ahmed',
+      artist: 'Abdu Albasit',
     ),
     AudioModel(
       id: 'https://server7.mp3quran.net/basit/Almusshaf-Al-Mojawwad/007.mp3',
       url: 'https://server7.mp3quran.net/basit/Almusshaf-Al-Mojawwad/007.mp3',
       title: "Al-A'raf",
-      artist: 'Ahmed',
+      artist: 'Abdu Albasit',
     ),
   ];
 
