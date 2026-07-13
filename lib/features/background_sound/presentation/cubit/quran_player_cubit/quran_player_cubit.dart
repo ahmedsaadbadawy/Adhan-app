@@ -3,10 +3,10 @@ import 'dart:async';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:home_widget/home_widget.dart';
 
 import '../../../../../core/services/audio/audio_model.dart';
 import '../../../../../core/services/audio/audio_player_service.dart';
+import '../../../../../core/services/home_widget_service.dart';
 import '../../../data/sounds_datasourse.dart';
 
 part 'quran_player_state.dart';
@@ -85,32 +85,24 @@ class QuranPlayerCubit extends Cubit<QuranPlayerState> {
   }
 
   void _listenToIndex() {
-    _indexSubscription ??= _audioService.currentIndexStream.listen((index) {
-      if (index == null) return;
+    _indexSubscription ??= _audioService.currentIndexStream.listen((
+      index,
+    ) async {
+      if (index == null || index == state.currentIndex) return;
 
       emit(state.copyWith(currentIndex: index));
+      debugPrint('currentIndex =  $index');
+      await HomeWidgetService.updateUrl(
+        SoundsDatasourse.testPlaylist[state.currentIndex].url,
+      );
     });
   }
 
   Future<void> playNext() async {
-    debugPrint('playNext state.currentIndex =  ${state.currentIndex}');
-    await HomeWidget.saveWidgetData(
-      'url',
-      SoundsDatasourse.testPlaylist[state.currentIndex].url,
-    );
-
-    await HomeWidget.updateWidget(androidName: 'HomeWidgetProvider');
     return _audioService.skipToNext();
   }
 
   Future<void> playPrevious() async {
-    debugPrint('playPrevious state.currentIndex =  ${state.currentIndex}');
-    await HomeWidget.saveWidgetData(
-      'url',
-      SoundsDatasourse.testPlaylist[state.currentIndex].url,
-    );
-
-    await HomeWidget.updateWidget(androidName: 'HomeWidgetProvider');
     return _audioService.skipToPrevious();
   }
 

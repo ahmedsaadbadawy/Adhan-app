@@ -1,44 +1,42 @@
 package com.example.azan_app
 
 import android.appwidget.AppWidgetManager
-import android.appwidget.AppWidgetProvider
 import android.content.Context
+import android.content.SharedPreferences
 import android.widget.RemoteViews
 
-/**
- * Implementation of App Widget functionality.
- */
-class MyWidgetHome : AppWidgetProvider() {
+import es.antonborri.home_widget.HomeWidgetProvider
+
+class MyWidgetHome : HomeWidgetProvider() {
+
     override fun onUpdate(
         context: Context,
         appWidgetManager: AppWidgetManager,
-        appWidgetIds: IntArray
+        appWidgetIds: IntArray,
+        widgetData: SharedPreferences,
     ) {
-        // There may be multiple widgets active, so update all of them
-        for (appWidgetId in appWidgetIds) {
-            updateAppWidget(context, appWidgetManager, appWidgetId)
+
+        appWidgetIds.forEach { widgetId ->
+
+            val views = RemoteViews(
+                context.packageName,
+                R.layout.my_widget_home
+            )
+
+            val url = widgetData.getString(
+                "url",
+                "No URL"
+            )
+
+            views.setTextViewText(
+                R.id.appwidget_text,
+                url
+            )
+
+            appWidgetManager.updateAppWidget(
+                widgetId,
+                views
+            )
         }
     }
-
-    override fun onEnabled(context: Context) {
-        // Enter relevant functionality for when the first widget is created
-    }
-
-    override fun onDisabled(context: Context) {
-        // Enter relevant functionality for when the last widget is disabled
-    }
-}
-
-internal fun updateAppWidget(
-    context: Context,
-    appWidgetManager: AppWidgetManager,
-    appWidgetId: Int
-) {
-    val widgetText = context.getString(R.string.appwidget_text)
-    // Construct the RemoteViews object
-    val views = RemoteViews(context.packageName, R.layout.my_widget_home)
-    views.setTextViewText(R.id.appwidget_text, widgetText)
-
-    // Instruct the widget manager to update the widget
-    appWidgetManager.updateAppWidget(appWidgetId, views)
 }

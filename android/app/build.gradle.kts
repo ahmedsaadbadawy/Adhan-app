@@ -39,6 +39,9 @@ android {
         setProguardFiles(listOf(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"))
         }
     }
+    buildFeatures {
+        viewBinding = true
+    }
 }
 
 kotlin {
