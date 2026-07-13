@@ -4,7 +4,6 @@ import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.SharedPreferences
 import android.widget.RemoteViews
-
 import es.antonborri.home_widget.HomeWidgetProvider
 
 class MyWidgetHome : HomeWidgetProvider() {
@@ -23,14 +22,14 @@ class MyWidgetHome : HomeWidgetProvider() {
                 R.layout.my_widget_home
             )
 
-            val url = widgetData.getString(
-                "url",
-                "No URL"
+            val text = widgetData.getString(
+                "widgetText",
+                "No Data"
             )
 
             views.setTextViewText(
                 R.id.appwidget_text,
-                url
+                text
             )
 
             appWidgetManager.updateAppWidget(

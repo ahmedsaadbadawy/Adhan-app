@@ -6,8 +6,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../core/services/audio/audio_model.dart';
 import '../../../../../core/services/audio/audio_player_service.dart';
-import '../../../../../core/services/home_widget_service.dart';
-import '../../../data/sounds_datasourse.dart';
 
 part 'quran_player_state.dart';
 
@@ -91,10 +89,7 @@ class QuranPlayerCubit extends Cubit<QuranPlayerState> {
       if (index == null || index == state.currentIndex) return;
 
       emit(state.copyWith(currentIndex: index));
-      debugPrint('currentIndex =  $index');
-      await HomeWidgetService.updateUrl(
-        SoundsDatasourse.testPlaylist[state.currentIndex].url,
-      );
+      debugPrint('current sound Index =  $index');
     });
   }
 

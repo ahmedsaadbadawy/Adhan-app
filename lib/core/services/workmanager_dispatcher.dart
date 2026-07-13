@@ -1,6 +1,7 @@
 import 'dart:developer' as developer;
 
 import 'package:adhan_dart/adhan_dart.dart';
+import 'package:azan_app/core/services/home_widget_service.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'package:workmanager/workmanager.dart';
@@ -41,6 +42,9 @@ void callbackDispatcher() {
         location: location,
         force: true,
       );
+
+      await HomeWidgetService.updateCurrentTime();
+
       print('========== WORKMANAGER FINISHED WITH GET IT ==========');
       return true;
     } catch (e, s) {
