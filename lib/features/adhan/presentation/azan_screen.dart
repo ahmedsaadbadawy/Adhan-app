@@ -1,6 +1,5 @@
 import 'package:adhan_dart/adhan_dart.dart';
 import 'package:azan_app/core/DI/service_allocator.dart';
-import 'package:azan_app/core/services/home_widget_service.dart';
 import 'package:azan_app/core/services/notifications/notification_permission_handler.dart';
 import 'package:azan_app/core/services/notifications/prayer_notification_scheduler.dart';
 import 'package:flutter/material.dart';
@@ -21,7 +20,6 @@ class AzanScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    HomeWidgetService.updateCurrentTime();
 
     tz.initializeTimeZones();
 

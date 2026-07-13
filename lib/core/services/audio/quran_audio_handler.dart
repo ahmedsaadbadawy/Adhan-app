@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:audio_service/audio_service.dart';
 import 'package:just_audio/just_audio.dart';
 
@@ -10,11 +9,9 @@ class QuranAudioHandler extends BaseAudioHandler
   }
 
   final AudioPlayer _player = AudioPlayer();
-
   AudioPlayer get player => _player;
 
   StreamSubscription<PlayerState>? _playerStateSubscription;
-  StreamSubscription<Duration>? _positionSubscription;
   StreamSubscription<Duration?>? _durationSubscription;
   StreamSubscription<int?>? _indexSubscription;
 
@@ -30,13 +27,18 @@ class QuranAudioHandler extends BaseAudioHandler
       return;
     }
 
-    await _player.setAudioSource(AudioSource.uri(Uri.parse(url)));
+    final Duration? loadedDuration = await _player.setAudioSource(
+      AudioSource.uri(Uri.parse(url)),
+    );
 
     _initialized = true;
 
-    queue.add([media]);
+    final mediaWithDuration = media.copyWith(
+      duration: loadedDuration ?? media.duration,
+    );
 
-    mediaItem.add(media);
+    queue.add([mediaWithDuration]);
+    mediaItem.add(mediaWithDuration);
 
     _broadcastState();
   }
@@ -46,12 +48,18 @@ class QuranAudioHandler extends BaseAudioHandler
     required List<MediaItem> mediaItems,
     int initialIndex = 0,
   }) async {
-    await _player.setAudioSources(
+    final Duration? initialDuration = await _player.setAudioSources(
       urls.map((url) => AudioSource.uri(Uri.parse(url))).toList(),
       initialIndex: initialIndex,
     );
 
     _initialized = true;
+
+    if (mediaItems.isNotEmpty) {
+      mediaItems[initialIndex] = mediaItems[initialIndex].copyWith(
+        duration: initialDuration,
+      );
+    }
 
     queue.add(mediaItems);
     mediaItem.add(mediaItems[initialIndex]);
@@ -62,7 +70,6 @@ class QuranAudioHandler extends BaseAudioHandler
   @override
   Future<void> skipToQueueItem(int index) async {
     final currentQueue = queue.value;
-
     if (index < 0 || index >= currentQueue.length) return;
 
     await _player.seek(Duration.zero, index: index);
@@ -73,16 +80,21 @@ class QuranAudioHandler extends BaseAudioHandler
       _broadcastState();
     });
 
-    _positionSubscription = _player.positionStream.listen((_) {
-      _broadcastState();
-    });
-
     _durationSubscription = _player.durationStream.listen((duration) {
-      final current = mediaItem.value;
+      final index = _player.currentIndex;
+      final currentQueue = queue.value;
 
-      if (current == null) return;
+      if (index != null &&
+          index >= 0 &&
+          index < currentQueue.length &&
+          duration != null) {
+        final updatedItem = currentQueue[index].copyWith(duration: duration);
+        currentQueue[index] = updatedItem;
+        queue.add(List.from(currentQueue));
 
-      mediaItem.add(current.copyWith(duration: duration));
+        mediaItem.add(updatedItem);
+        _broadcastState();
+      }
     });
 
     _indexSubscription = _player.currentIndexStream.listen((index) {
@@ -124,16 +136,12 @@ class QuranAudioHandler extends BaseAudioHandler
     switch (_player.processingState) {
       case ProcessingState.idle:
         return AudioProcessingState.idle;
-
       case ProcessingState.loading:
         return AudioProcessingState.loading;
-
       case ProcessingState.buffering:
         return AudioProcessingState.buffering;
-
       case ProcessingState.ready:
         return AudioProcessingState.ready;
-
       case ProcessingState.completed:
         return AudioProcessingState.completed;
     }
@@ -142,34 +150,23 @@ class QuranAudioHandler extends BaseAudioHandler
   @override
   Future<void> play() async {
     await _player.play();
-    _broadcastState();
   }
 
   @override
   Future<void> pause() async {
     await _player.pause();
-    _broadcastState();
   }
-
-  // @override
-  // Future<void> stop() async {
-  //   await _player.pause();
-  //   await _player.seek(Duration.zero);
-
-  //   _broadcastState();
-  // }
 
   @override
   Future<void> stop() async {
     await _player.stop();
     await _player.seek(Duration.zero);
-
-    _broadcastState();
   }
 
   @override
   Future<void> seek(Duration position) async {
     await _player.seek(position);
+    _broadcastState();
   }
 
   @override
@@ -196,14 +193,11 @@ class QuranAudioHandler extends BaseAudioHandler
 
   @override
   Future<void> onTaskRemoved() async {
-    // Keep playback alive when the UI task is removed.
-    // The user can stop playback from the notification.
-    // await _player.stop();
+    // close();
   }
 
   Future<void> close() async {
     await _playerStateSubscription?.cancel();
-    await _positionSubscription?.cancel();
     await _durationSubscription?.cancel();
     await _indexSubscription?.cancel();
 

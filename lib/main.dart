@@ -8,6 +8,7 @@ import 'package:workmanager/workmanager.dart';
 
 import 'core/app_router.dart';
 import 'core/services/audio/audio_initializer.dart';
+import 'core/services/home_widget_service.dart';
 import 'core/services/notifications/islamic_events_notification_scheduler.dart';
 import 'core/services/notifications/notafications_service.dart';
 
@@ -46,6 +47,9 @@ void main() async {
       'timezoneName': 'Africa/Cairo',
     },
   );
+
+  await HomeWidgetService.updateCurrentTime();
+
   runApp(const AzanApp());
 }
 
