@@ -7,6 +7,7 @@ import 'package:timezone/timezone.dart' as tz;
 import 'package:workmanager/workmanager.dart';
 
 import 'core/app_router.dart';
+import 'core/services/app_shortcuts/app_shortcuts_service.dart';
 import 'core/services/audio/audio_initializer.dart';
 import 'core/services/home_widget_service.dart';
 import 'core/services/notifications/islamic_events_notification_scheduler.dart';
@@ -48,6 +49,8 @@ void main() async {
     },
   );
 
+  await getIt<AppShortcutsService>().init();
+  
   await HomeWidgetService.updateCurrentTime();
 
   runApp(const AzanApp());

@@ -6,6 +6,8 @@ import 'package:azan_app/core/services/notifications/notification_permission_han
 import 'package:azan_app/core/services/notifications/prayer_notification_scheduler.dart';
 import 'package:get_it/get_it.dart';
 
+import '../services/app_shortcuts/app_shortcuts_service.dart';
+
 final getIt = GetIt.instance;
 
 Future<void> setupDependencyInjection() async {
@@ -37,6 +39,10 @@ Future<void> setupDependencyInjection() async {
     getIt.registerSingleton<IslamicEventsNotificationScheduler>(
       IslamicEventsNotificationScheduler(),
     );
+  }
+
+  if (!getIt.isRegistered<AppShortcutsService>()) {
+    getIt.registerSingleton<AppShortcutsService>(AppShortcutsService());
   }
 }
 
