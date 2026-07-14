@@ -31,6 +31,12 @@ class QuranPlayerCubit extends Cubit<QuranPlayerState> {
     _durationSubscription = _audioService.durationStream.listen((duration) {
       emit(state.copyWith(duration: duration ?? Duration.zero));
     });
+
+    _indexSubscription = _audioService.currentIndexStream.listen((index) {
+      debugPrint("Cubit Index = $index");
+
+      emit(state.copyWith(currentIndex: index ?? 0));
+    });
   }
 
   Future<void> play() async {
@@ -54,43 +60,16 @@ class QuranPlayerCubit extends Cubit<QuranPlayerState> {
 
   //====================== Playlist ======================
 
-  Future<void> loadPlaylist(
-    List<AudioModel> tracks, {
-    int initialIndex = 0,
-  }) async {
-    await _audioService.loadPlaylist(
-      tracks: tracks,
-      initialIndex: initialIndex,
-    );
-
-    emit(state.copyWith(playlist: tracks, currentIndex: initialIndex));
-
-    _listenToIndex();
-  }
-
   Future<void> playPlaylist(
     List<AudioModel> tracks, {
     int initialIndex = 0,
   }) async {
+    emit(state.copyWith(playlist: tracks, currentIndex: initialIndex));
+
     await _audioService.playPlaylist(
       tracks: tracks,
       initialIndex: initialIndex,
     );
-
-    emit(state.copyWith(playlist: tracks, currentIndex: initialIndex));
-
-    _listenToIndex();
-  }
-
-  void _listenToIndex() {
-    _indexSubscription ??= _audioService.currentIndexStream.listen((
-      index,
-    ) async {
-      if (index == null || index == state.currentIndex) return;
-
-      emit(state.copyWith(currentIndex: index));
-      debugPrint('current sound Index =  $index');
-    });
   }
 
   Future<void> playNext() async {
