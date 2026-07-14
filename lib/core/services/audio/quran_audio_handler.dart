@@ -75,6 +75,26 @@ class QuranAudioHandler extends BaseAudioHandler
     await _player.seek(Duration.zero, index: index);
   }
 
+  Future<void> playAsset(String assetPath) async {
+    await _player.setAudioSource(AudioSource.asset(assetPath));
+
+    _initialized = true;
+
+    await _player.play();
+  }
+
+  Future<void> playAssetAndWait(String assetPath) async {
+    await _player.setAudioSource(AudioSource.asset(assetPath));
+
+    _initialized = true;
+
+    await _player.play();
+
+    await _player.playerStateStream.firstWhere(
+      (state) => state.processingState == ProcessingState.completed,
+    );
+  }
+
   void _listenToPlayer() {
     _playerStateSubscription = _player.playerStateStream.listen((_) {
       _broadcastState();

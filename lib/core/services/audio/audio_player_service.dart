@@ -65,6 +65,15 @@ class AudioPlayerService {
     await play();
   }
 
+  Future<void> playAsset(String assetPath) async {
+    await _handler.playAsset(assetPath);
+  }
+
+  Future<void> playAssetAndWait(String assetPath) async {
+    await _handler.playAssetAndWait(assetPath);
+    _handler.stop();
+  }
+
   Future<void> skipToNext() async {
     await _handler.skipToNext();
   }
