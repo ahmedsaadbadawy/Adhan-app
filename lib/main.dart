@@ -7,6 +7,9 @@ import 'package:timezone/timezone.dart' as tz;
 import 'package:workmanager/workmanager.dart';
 
 import 'core/app_router.dart';
+import 'core/services/app_shortcuts/app_shortcuts_service.dart';
+import 'core/services/audio/audio_initializer.dart';
+import 'core/services/home_widget_service.dart';
 import 'core/services/notifications/islamic_events_notification_scheduler.dart';
 import 'core/services/notifications/notafications_service.dart';
 
@@ -15,6 +18,14 @@ void main() async {
 
   tz.initializeTimeZones();
   tz.setLocalLocation(tz.getLocation('Africa/Cairo'));
+
+  try {
+    await AudioInitializer.init();
+    debugPrint('Audio initialized');
+  } catch (e, s) {
+    debugPrint('Audio init failed: $e');
+    debugPrint('$s');
+  }
 
   await setupDependencyInjection();
 
@@ -29,7 +40,7 @@ void main() async {
   await Workmanager().registerPeriodicTask(
     'refresh-prayer-schedule',
     'refreshPrayerSchedule',
-    frequency: const Duration(minutes: 15),
+    frequency: const Duration(hours: 1),
     existingWorkPolicy: ExistingPeriodicWorkPolicy.replace,
     inputData: {
       'latitude': 31.04, //TODO get the real location later.
@@ -37,6 +48,10 @@ void main() async {
       'timezoneName': 'Africa/Cairo',
     },
   );
+
+  await getIt<AppShortcutsService>().init();
+  
+  await HomeWidgetService.updateCurrentTime();
 
   runApp(const AzanApp());
 }
