@@ -5,20 +5,8 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/app_router.dart';
 import '../cubit/splash_cubit/splash_cubit.dart';
 
-class SplashScreen extends StatefulWidget {
+class SplashScreen extends StatelessWidget {
   const SplashScreen({super.key});
-
-  @override
-  State<SplashScreen> createState() => _SplashScreenState();
-}
-
-class _SplashScreenState extends State<SplashScreen> {
-  @override
-  void initState() {
-    super.initState();
-
-    context.read<SplashCubit>().initialize();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +28,21 @@ class _SplashScreenState extends State<SplashScreen> {
           default:
         }
       },
-      child: const Scaffold(body: Center(child: CircularProgressIndicator())),
+      child: const Scaffold(
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text('زاد', style: TextStyle(fontSize: 46, color: Colors.green)),
+              Text(
+                '{وَتَزَوَّدُوا فَإِنَّ خَيْرَ الزَّادِ التَّقْوَى}',
+                style: TextStyle(fontSize: 24, color: Colors.greenAccent),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

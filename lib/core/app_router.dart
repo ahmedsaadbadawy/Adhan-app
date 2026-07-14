@@ -11,7 +11,6 @@ import '../features/splash/presentation/cubit/splash_cubit/splash_cubit.dart';
 import '../features/splash/presentation/views/splash_screen.dart';
 import 'DI/service_allocator.dart';
 import 'services/adhan_service.dart';
-import 'services/app_shortcuts/app_shortcuts_service.dart';
 import 'services/audio/audio_player_service.dart';
 import 'services/notifications/prayer_notification_scheduler.dart';
 
@@ -25,7 +24,7 @@ abstract class AppRouter {
       GoRoute(
         path: splash,
         builder: (context, state) => BlocProvider(
-          create: (context) => SplashCubit(getIt<AppShortcutsService>()),
+          create: (context) => SplashCubit(getIt(), getIt())..initialize(),
           child: const SplashScreen(),
         ),
       ),
