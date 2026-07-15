@@ -31,7 +31,7 @@ class SplashCubit extends Cubit<SplashState> {
         break;
 
       default:
-        emit(SplashNavigatePrayerTimes());
+        emit(SplashNavigateHome());
     }
   }
 }

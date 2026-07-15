@@ -50,7 +50,7 @@ void main() async {
   );
 
   await getIt<AppShortcutsService>().init();
-  
+
   await HomeWidgetService.updateCurrentTime();
 
   runApp(const AzanApp());

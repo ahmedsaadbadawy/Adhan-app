@@ -7,6 +7,8 @@ import '../features/adhan/presentation/azan_screen.dart';
 import '../features/adhan/presentation/cubit/adhan_cubit/adhan_cubit.dart';
 import '../features/background_sound/presentation/cubit/quran_player_cubit/quran_player_cubit.dart';
 import '../features/background_sound/presentation/views/quran_player_screen.dart';
+import '../features/permissions/presentation/cubit/permission_setup/permission_setup_cubit.dart';
+import '../features/permissions/presentation/views/permission_setup_screen.dart';
 import '../features/splash/presentation/cubit/splash_cubit/splash_cubit.dart';
 import '../features/splash/presentation/views/splash_screen.dart';
 import 'DI/service_allocator.dart';
@@ -18,6 +20,7 @@ abstract class AppRouter {
   static const splash = '/';
   static const azan = '/azan';
   static const quranPlayer = '/quran-player';
+  static const permissionSetup = '/permission-setup';
 
   static final router = GoRouter(
     routes: [
@@ -26,6 +29,13 @@ abstract class AppRouter {
         builder: (context, state) => BlocProvider(
           create: (context) => SplashCubit(getIt(), getIt())..initialize(),
           child: const SplashScreen(),
+        ),
+      ),
+      GoRoute(
+        path: permissionSetup,
+        builder: (context, state) => BlocProvider(
+          create: (context) => PermissionSetupCubit()..loadPermissions(),
+          child: const PermissionSetupScreen(),
         ),
       ),
       GoRoute(

@@ -1,6 +1,5 @@
 import 'package:adhan_dart/adhan_dart.dart';
 import 'package:azan_app/core/DI/service_allocator.dart';
-import 'package:azan_app/core/services/notifications/notification_permission_handler.dart';
 import 'package:azan_app/core/services/notifications/prayer_notification_scheduler.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -52,17 +51,6 @@ class AzanScreen extends StatelessWidget {
         ),
       );
     }
-
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final notificationPermissionHandler =
-          getIt<NotificationPermissionHandler>();
-      // await notificationPermissionHandler.checkAndRequestExactAlarmPermission(context);
-      // if (context.mounted) {
-      await notificationPermissionHandler.checkAndRequestBatteryOptimization(
-        context,
-      );
-      // }
-    });
 
     return Scaffold(
       appBar: AppBar(

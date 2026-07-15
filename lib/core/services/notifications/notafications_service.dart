@@ -1,8 +1,6 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/timezone.dart' as tz;
 
-import 'notification_permission_handler.dart';
-
 class NotificationService {
   static final NotificationService _instance = NotificationService._internal();
 
@@ -22,20 +20,8 @@ class NotificationService {
     );
 
     await _plugin.initialize(
-      settings: InitializationSettings(android: androidSettings),
+      settings: const InitializationSettings(android: androidSettings),
     );
-
-    final androidPlugin = _plugin
-        .resolvePlatformSpecificImplementation<
-          AndroidFlutterLocalNotificationsPlugin
-        >();
-
-    if (requestPermissions) {
-      await NotificationPermissionHandler().handleNotificationsPermissions();
-
-      await androidPlugin?.requestNotificationsPermission();
-      await androidPlugin?.requestExactAlarmsPermission();
-    }
 
     const channel = AndroidNotificationChannel(
       _channelId,
@@ -45,6 +31,11 @@ class NotificationService {
       sound: RawResourceAndroidNotificationSound('adhan'),
       playSound: true,
     );
+
+    final androidPlugin = _plugin
+        .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin
+        >();
 
     await androidPlugin?.createNotificationChannel(channel);
   }
