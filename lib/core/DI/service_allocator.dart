@@ -7,6 +7,7 @@ import 'package:azan_app/core/services/notifications/prayer_notification_schedul
 import 'package:get_it/get_it.dart';
 
 import '../services/app_shortcuts/app_shortcuts_service.dart';
+import '../services/deep_links/deep_links_service.dart';
 
 final getIt = GetIt.instance;
 
@@ -43,6 +44,10 @@ Future<void> setupDependencyInjection() async {
 
   if (!getIt.isRegistered<AppShortcutsService>()) {
     getIt.registerSingleton<AppShortcutsService>(AppShortcutsService());
+  }
+
+  if (!getIt.isRegistered<DeepLinksService>()) {
+    getIt.registerSingleton<DeepLinksService>(DeepLinksService());
   }
 }
 

@@ -24,7 +24,8 @@ abstract class AppRouter {
       GoRoute(
         path: splash,
         builder: (context, state) => BlocProvider(
-          create: (context) => SplashCubit(getIt(), getIt())..initialize(),
+          create: (context) =>
+              SplashCubit(getIt(), getIt(), getIt())..initialize(),
           child: const SplashScreen(),
         ),
       ),
