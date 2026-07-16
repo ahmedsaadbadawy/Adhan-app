@@ -1,6 +1,8 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/timezone.dart' as tz;
 
+import 'notification_permission_handler.dart';
+
 class NotificationService {
   static final NotificationService _instance = NotificationService._internal();
 
@@ -18,6 +20,10 @@ class NotificationService {
     const androidSettings = AndroidInitializationSettings(
       '@mipmap/ic_launcher',
     );
+
+    if (requestPermissions) {
+      await NotificationPermissionHandler().handleNotificationsPermissions();
+    }
 
     await _plugin.initialize(
       settings: const InitializationSettings(android: androidSettings),

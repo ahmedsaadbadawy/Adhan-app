@@ -132,9 +132,11 @@ class QuranAudioHandler extends BaseAudioHandler
       PlaybackState(
         controls: [
           MediaControl.skipToPrevious,
+          // MediaControl.rewind,
           if (_player.playing) MediaControl.pause else MediaControl.play,
-          MediaControl.stop,
+          // MediaControl.fastForward,
           MediaControl.skipToNext,
+          MediaControl.stop,
         ],
         systemActions: const {
           MediaAction.seek,

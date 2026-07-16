@@ -91,19 +91,14 @@ class AzanScreen extends StatelessWidget {
           prayerTile('Isha', prayerTimes.isha),
           ElevatedButton(
             onPressed: () async {
-              try {
-                final testTime = tz.TZDateTime.now(
-                  location,
-                ).add(const Duration(seconds: 3));
-                await getIt<PrayerNotificationScheduler>().scheduleForPrayer(
-                  id: 999,
-                  title: 'Test Prayer',
-                  scheduledTime: testTime,
-                );
-                debugPrint('✅ Test notification scheduled for $testTime');
-              } catch (e, st) {
-                debugPrint('❌ Failed to schedule: $e\n$st');
-              }
+              final testTime = tz.TZDateTime.now(
+                location,
+              ).add(const Duration(seconds: 3));
+              await getIt<PrayerNotificationScheduler>().scheduleForPrayer(
+                id: 999,
+                title: 'Test Prayer',
+                scheduledTime: testTime,
+              );
             },
             child: const Text('Test notification in 3s'),
           ),

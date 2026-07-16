@@ -19,6 +19,7 @@ class AudioInitializer {
         androidNotificationChannelName: 'Quran Playback',
         androidNotificationOngoing: true,
         androidShowNotificationBadge: true,
+        androidNotificationChannelDescription: 'Audio playback',
       ),
     );
 
