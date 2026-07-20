@@ -34,9 +34,10 @@ android {
 
             // FIX: Note the 'is' prefix here
         isMinifyEnabled = true
+        isShrinkResources = true
         
         // FIX: Explicitly call the function on the build type
-        setProguardFiles(listOf(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"))
+        proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
     buildFeatures {

@@ -10,42 +10,41 @@ import '../services/app_shortcuts/app_shortcuts_service.dart';
 
 final getIt = GetIt.instance;
 
-Future<void> setupDependencyInjection() async {
-  if (!getIt.isRegistered<AudioPlayerService>()) {
-    getIt.registerLazySingleton<AudioPlayerService>(() => AudioPlayerService());
-  }
-
+Future<void> _registerCoreServices() async {
   if (!getIt.isRegistered<AdhanService>()) {
     getIt.registerSingleton<AdhanService>(const AdhanService());
   }
-
   if (!getIt.isRegistered<NotificationService>()) {
     getIt.registerSingleton<NotificationService>(NotificationService());
   }
-
   if (!getIt.isRegistered<NotificationPermissionHandler>()) {
     getIt.registerSingleton<NotificationPermissionHandler>(
       NotificationPermissionHandler(),
     );
   }
-
   if (!getIt.isRegistered<PrayerNotificationScheduler>()) {
     getIt.registerSingleton<PrayerNotificationScheduler>(
       PrayerNotificationScheduler(),
     );
   }
-
   if (!getIt.isRegistered<IslamicEventsNotificationScheduler>()) {
     getIt.registerSingleton<IslamicEventsNotificationScheduler>(
       IslamicEventsNotificationScheduler(),
     );
   }
+}
 
+Future<void> setupDependencyInjection() async {
+  await _registerCoreServices();
+
+  if (!getIt.isRegistered<AudioPlayerService>()) {
+    getIt.registerLazySingleton<AudioPlayerService>(() => AudioPlayerService());
+  }
   if (!getIt.isRegistered<AppShortcutsService>()) {
     getIt.registerSingleton<AppShortcutsService>(AppShortcutsService());
   }
 }
 
 Future<void> setupBackgroundDependencies() async {
-  await setupDependencyInjection();
+  await _registerCoreServices(); // only what the WorkManager task actually needs
 }

@@ -19,3 +19,9 @@
 -keep class com.google.gson.** { *; }
 
 -dontwarn com.google.android.play.core.**
+
+-keepattributes Signature
+-keepattributes *Annotation*
+-keep class com.ryanheise.** { *; }
+-keep class es.antonborri.home_widget.** { *; }
+-keep class com.example.azan_app.** { *; }
