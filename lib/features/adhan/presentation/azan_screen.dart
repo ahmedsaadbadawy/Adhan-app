@@ -108,25 +108,6 @@ class AzanScreen extends StatelessWidget {
             },
             child: const Text('Play Sound Screen'),
           ),
-          // ElevatedButton(
-          //   onPressed: () async {
-          //     // final prefs = await SharedPreferences.getInstance();
-          //     // await prefs.setDouble('last_lat', 31.04);
-          //     // await prefs.setDouble('last_lng', 31.38);
-          //     // await prefs.setString('last_timezone', location.name);
-
-          //     await Workmanager().registerOneOffTask(
-          //       'test-run',
-          //       'refreshPrayerSchedule',
-          //       inputData: {
-          //         'latitude': 31.04,
-          //         'longitude': 31.38,
-          //         'timezoneName': 'Africa/Cairo',
-          //       },
-          //     );
-          //   },
-          //   child: const Text('Change location and its adhan'),
-          // ),
           const Divider(height: 32),
           AdhanRemainingTimeBlocBuilder(),
         ],
