@@ -21,13 +21,7 @@ void main() async {
   tz.initializeTimeZones();
   tz.setLocalLocation(tz.getLocation('Africa/Cairo'));
 
-  try {
     await AudioInitializer.init();
-    debugPrint('Audio initialized');
-  } catch (e, s) {
-    debugPrint('Audio init failed: $e');
-    debugPrint('$s');
-  }
 
   await setupDependencyInjection();
 
