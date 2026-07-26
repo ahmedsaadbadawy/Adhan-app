@@ -20,7 +20,6 @@ class QuranPlayerScreen extends StatelessWidget {
             child: Column(
               children: [
                 const SizedBox(height: 20),
-
                 Text(
                   state.isPlaying ? 'Playing' : 'Paused',
                   style: const TextStyle(
@@ -40,14 +39,16 @@ class QuranPlayerScreen extends StatelessWidget {
 
                 const SizedBox(height: 30),
 
-                Slider(
-                  value: state.position.inSeconds.toDouble(),
-                  max: state.duration.inSeconds <= 0
-                      ? 1
-                      : state.duration.inSeconds.toDouble(),
-                  onChanged: (value) {
-                    cubit.seek(value);
-                  },
+                RepaintBoundary(
+                  child: Slider(
+                    value: state.position.inSeconds.toDouble(),
+                    max: state.duration.inSeconds <= 0
+                        ? 1
+                        : state.duration.inSeconds.toDouble(),
+                    onChanged: (value) {
+                      cubit.seek(value);
+                    },
+                  ),
                 ),
 
                 Text(

@@ -68,7 +68,7 @@ Future<void> dailyRefreshCallback() async {
 
 Future<void> scheduleTomorrowRefresh() async {
   await AndroidAlarmManager.oneShot(
-    const Duration(minutes: 2),
+    const Duration(hours: 1),
     kDailyRefreshAlarmId,
     dailyRefreshCallback,
     exact: true,
