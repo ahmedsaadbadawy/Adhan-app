@@ -38,7 +38,7 @@ void main() async {
   ////TODO in the first get location place.
   await Workmanager().initialize(callbackDispatcher);
   await Workmanager().registerPeriodicTask(
-    'refresh-prayer-schedule',
+    'refreshPrayerSchedule',
     'refreshPrayerSchedule',
     frequency: const Duration(hours: 1),
     // existingWorkPolicy: ExistingPeriodicWorkPolicy.replace,

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/timezone.dart' as tz;
 
@@ -16,34 +18,47 @@ class NotificationService {
   static const _channelId = 'my_adhan_channel';
   static const _channelName = 'my_Adhan Notifications';
 
+  static const _iosAdhanSoundFile =
+      'adhan.caf'; //TODO Must be added to ios/Runner and to "Copy Bundle Resources" in Xcode.
+
   Future<void> init({bool requestPermissions = true}) async {
     const androidSettings = AndroidInitializationSettings(
       '@mipmap/ic_launcher',
     );
 
-    if (requestPermissions) {
+    final darwinSettings = DarwinInitializationSettings(
+      requestAlertPermission: requestPermissions,
+      requestBadgePermission: requestPermissions,
+      requestSoundPermission: requestPermissions,
+    );
+
+    if (requestPermissions && Platform.isAndroid) {
       await NotificationPermissionHandler().handleNotificationsPermissions();
     }
 
     await _plugin.initialize(
-      settings: const InitializationSettings(android: androidSettings),
+      settings: InitializationSettings(
+        android: androidSettings,
+        iOS: darwinSettings,
+      ),
     );
 
-    const channel = AndroidNotificationChannel(
-      _channelId,
-      _channelName,
-      description: 'Notifications for prayer times',
-      importance: Importance.max,
-      sound: RawResourceAndroidNotificationSound('adhan'),
-      playSound: true,
-    );
+    if (Platform.isAndroid) {
+      const channel = AndroidNotificationChannel(
+        _channelId,
+        _channelName,
+        description: 'Notifications for prayer times',
+        importance: Importance.max,
+        sound: RawResourceAndroidNotificationSound('adhan'),
+        playSound: true,
+      );
 
-    final androidPlugin = _plugin
-        .resolvePlatformSpecificImplementation<
-          AndroidFlutterLocalNotificationsPlugin
-        >();
-
-    await androidPlugin?.createNotificationChannel(channel);
+      final androidPlugin = _plugin
+          .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin
+          >();
+      await androidPlugin?.createNotificationChannel(channel);
+    }
   }
 
   Future<void> scheduleNotification({
@@ -69,14 +84,19 @@ class NotificationService {
           visibility: NotificationVisibility.public,
           ticker: 'ticker',
         ),
+        iOS: DarwinNotificationDetails(
+          presentAlert: true,
+          presentBadge: true,
+          presentSound: true,
+          sound: _iosAdhanSoundFile,
+          interruptionLevel: InterruptionLevel.timeSensitive,
+        ),
       ),
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
     );
   }
 
-  Future<void> cancelNotification(int id) async {
-    await _plugin.cancel(id: id);
-  }
+  Future<void> cancelNotification(int id) async => _plugin.cancel(id: id);
 
   Future<void> logPendingNotifications() async {
     final pending = await _plugin.pendingNotificationRequests();

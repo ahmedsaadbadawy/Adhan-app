@@ -5,8 +5,7 @@ import 'package:permission_handler/permission_handler.dart';
 
 class NotificationPermissionHandler {
   Future<void> handleNotificationsPermissions() async {
-    if (!Platform.isAndroid) return;
-
+    
     var notificationStatus = await Permission.notification.status;
 
     if (!notificationStatus.isGranted) {
@@ -19,20 +18,19 @@ class NotificationPermissionHandler {
     //   debugPrint('❌ Notification permission NOT granted');
     // }
 
+    if (!Platform.isAndroid) return;
+
     var alarmStatus = await Permission.scheduleExactAlarm.status;
 
     if (!alarmStatus.isGranted) {
       alarmStatus = await Permission.scheduleExactAlarm.request();
     }
-
-    // if (alarmStatus.isGranted) {
-    //   debugPrint('✅ Exact alarm permission granted');
-    // } else {
-    //   debugPrint('❌ Exact alarm permission NOT granted');
-    // }
   }
 
   Future<void> checkAndRequestExactAlarmPermission(BuildContext context) async {
+
+    if (!Platform.isAndroid) return;
+
     final status = await Permission.scheduleExactAlarm.status;
 
     if (status.isGranted) return;
@@ -67,6 +65,9 @@ class NotificationPermissionHandler {
   }
 
   Future<void> checkAndRequestBatteryOptimization(BuildContext context) async {
+
+    if (!Platform.isAndroid) return;
+
     final status = await Permission.ignoreBatteryOptimizations.status;
 
     if (status.isGranted) return;
