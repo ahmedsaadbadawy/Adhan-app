@@ -40,7 +40,7 @@ void main() async {
   await Workmanager().registerPeriodicTask(
     'refresh-prayer-schedule',
     'refreshPrayerSchedule',
-    frequency: const Duration(minutes: 15),
+    frequency: const Duration(hours: 1),
     // existingWorkPolicy: ExistingPeriodicWorkPolicy.replace,
     existingWorkPolicy: ExistingPeriodicWorkPolicy.keep,
     inputData: {

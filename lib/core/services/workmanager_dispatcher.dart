@@ -20,7 +20,7 @@ void callbackDispatcher() {
         'Task: $task'
         'WorkManager',
       );
-      print('========== WORKMANAGER STARTED WITH GET IT ==========');
+
       tz.initializeTimeZones();
 
       final location = tz.getLocation(inputData!['timezoneName'] as String);
@@ -29,31 +29,22 @@ void callbackDispatcher() {
 
       await setupBackgroundDependencies();
 
-      final coordinates = Coordinates(
-        inputData['latitude'] as double,
-        inputData['longitude'] as double,
-      );
+      // final coordinates = Coordinates(
+      //   inputData['latitude'] as double,
+      //   inputData['longitude'] as double,
+      // );
 
       final notificationService = getIt<NotificationService>();
+      await notificationService.init(requestPermissions: false);
+      
       final prayerNotificationScheduler = getIt<PrayerNotificationScheduler>();
       final adhanService = getIt<AdhanService>();
 
-      await notificationService.init(requestPermissions: false);
-
       await prayerNotificationScheduler.scheduleUpcomingPrayers(
         adhanService: adhanService,
-        coordinates: coordinates,
+        coordinates: const Coordinates(31.04, 31.38),
         location: location,
         force: true,
-      );
-
-      final testTime = tz.TZDateTime.now(
-        location,
-      ).add(const Duration(seconds: 1));
-      await getIt<PrayerNotificationScheduler>().scheduleForPrayer(
-        id: 995,
-        title: 'Test Prayer',
-        scheduledTime: testTime,
       );
 
       await HomeWidgetService.updateCurrentTime();
