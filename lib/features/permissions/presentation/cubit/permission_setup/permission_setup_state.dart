@@ -22,11 +22,18 @@ final class PermissionSetupLoaded extends PermissionSetupState {
   final bool batteryOptimizationGranted;
   final bool unusedAppConfigured;
 
-  bool get allCompleted =>
-      notificationGranted &&
-      exactAlarmGranted &&
-      batteryOptimizationGranted &&
-      unusedAppConfigured;
+  int get totalPermissions => 4;
+
+  int get completedCount => [
+        notificationGranted,
+        exactAlarmGranted,
+        batteryOptimizationGranted,
+        unusedAppConfigured,
+      ].where((granted) => granted).length;
+
+  double get progress => completedCount / totalPermissions;
+
+  bool get allCompleted => completedCount == totalPermissions;
 
   PermissionSetupLoaded copyWith({
     bool? notificationGranted,

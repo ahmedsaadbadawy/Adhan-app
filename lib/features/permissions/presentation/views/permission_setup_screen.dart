@@ -7,6 +7,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../cubit/permission_setup/permission_setup_cubit.dart';
 import 'widgets/permission_tiles_section.dart';
 
+import 'widgets/permission_progress_card.dart';
+
 class PermissionSetupScreen extends StatelessWidget {
   const PermissionSetupScreen({super.key});
 
@@ -22,27 +24,41 @@ class PermissionSetupScreen extends StatelessWidget {
             if (state is! PermissionSetupLoaded) {
               return const Center(child: CircularProgressIndicator());
             }
+
             return Padding(
               padding: const EdgeInsets.all(16),
               child: Column(
                 children: [
-                  PermissionTilesSection(cubit: cubit, state: state),
-                  const SizedBox(height: 30),
-                  Spacer(),
-                  FilledButton(
-                    onPressed: state.allCompleted
-                        ? () async {
-                            final prefs = await SharedPreferences.getInstance();
-                            prefs.setBool("firstLaunch", false);
-
-                            if (!context.mounted) return;
-
-                            context.go(AppRouter.azan);
-                          }
-                        : null,
-                    child: const Text("Continue"),
+                  PermissionProgressCard(
+                    completedCount: state.completedCount,
+                    totalCount: state.totalPermissions,
                   ),
-                  const SizedBox(height: 20),
+
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: PermissionTilesSection(cubit: cubit, state: state),
+                    ),
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  // Action Button
+                  SizedBox(
+                    width: double.infinity,
+                    child: FilledButton(
+                      onPressed: state.allCompleted
+                          ? () async {
+                              final prefs =
+                                  await SharedPreferences.getInstance();
+                              await prefs.setBool("firstLaunch", false);
+
+                              if (!context.mounted) return;
+                              context.go(AppRouter.azan);
+                            }
+                          : null,
+                      child: const Text("Continue"),
+                    ),
+                  ),
                 ],
               ),
             );
